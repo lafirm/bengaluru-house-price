@@ -3,6 +3,10 @@ import util  #our module
 
 app = Flask(__name__)
 
+@app.route('/')
+def hello():
+    return "<h1><center>Multiverse of Madness!</center></h1>"
+
 @app.route('/get_location_names', methods=['GET'])
 def get_location_names():
     response = jsonify({
