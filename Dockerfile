@@ -1,4 +1,4 @@
-FROM python/python:3.10.5 as build-stage
+FROM python:3.10.5 as build-stage
 COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
