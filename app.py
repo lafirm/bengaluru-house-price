@@ -13,14 +13,6 @@ __model = None
 def home():
     return render_template('app.html')
 
-@app.route('/get_location_names', methods=['GET'])
-def get_location_names():
-    response = jsonify({
-        'locations': __locations
-    })
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
 @app.route('/load_saved_artifacts', methods=['GET'])
 def load_saved_artifacts():
     print('Loading Saved Artifacts...')
@@ -34,6 +26,31 @@ def load_saved_artifacts():
         __model =  pickle.load(f)
     print("Artifacts were loaded successfully!")
 
+
+@app.route('/get_location_names', methods=['GET'])
+def get_location_names():
+    response = jsonify({
+        'locations': __locations
+    })
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
+@app.route('/get_estimated_price', methods=['GET'])
+def get_estimated_price(location, sqft, bath, bhk):
+    try:
+        loc_index = __data_columns.index(location.lower())
+    except:
+        loc_index = -1
+    x = np.zeros(len(__data_columns))
+    x[0] = sqft
+    x[1] = bath
+    x[2] = bhk
+    if loc_index >= 0:
+        x[loc_index] = 1
+    return round(__model.predict([x])[0], 2)
+
+
 @app.route('/predict_home_price', methods=['GET', 'POST'])
 def predict_home_price():
     total_sqft = float(request.form['total_sqft'])
@@ -45,23 +62,6 @@ def predict_home_price():
     })
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-    # return render_template("app.html", prediction_text="{} Lakhs".format(response))
-
-@app.route('/get_estimated_price', methods=['GET'])
-def get_estimated_price(location, sqft, bath, bhk):
-    try:
-        loc_index = __data_columns.index(location.lower())
-    except:
-        loc_index = -1
-
-    x = np.zeros(len(__data_columns))
-    x[0] = sqft
-    x[1] = bath
-    x[2] = bhk
-    if loc_index >= 0:
-        x[loc_index] = 1
-
-    return round(__model.predict([x])[0], 2)
 
 if __name__ == '__main__':
     print("Starting Python Flask Server for BLR Home Price Prediction")
