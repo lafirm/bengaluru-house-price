@@ -205,7 +205,7 @@ body, html {
 </head>
 <body>
 <div class="img"></div>
-<form class="form">
+<form class="form" action="{{ url_for('predict_home_price')}}"method="post">
 	<h2>Area (Square Feet)</h2>
     <input class="area"  type="text" id="uiSqft" class="floatLabel" name="Squareft" value="1000">
 	<h2>BHK</h2>
@@ -221,8 +221,6 @@ body, html {
 		<input type="radio" id="radio-bhk-5" name="uiBHK" value="5"/>
 		<label for="radio-bhk-5">5</label>
 	</div>
-	</form>
-<form class="form">
 	<h2>Bath</h2>
 	<div class="switch-field">
 		<input type="radio" id="radio-bath-1" name="uiBathrooms" value="1"/>
@@ -245,6 +243,7 @@ body, html {
   </select>
 </div>
 	<button class="submit" type="button">Estimate Price</button>
+  </form>
 	<div id="uiEstimatedPrice" class="result">
     <h2>
       {{prediction_text}}
