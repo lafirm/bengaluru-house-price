@@ -66,6 +66,7 @@ def get_estimated_price(location, sqft, bath, bhk):
 if __name__ == '__main__':
     print("Starting Python Flask Server for BLR Home Price Prediction")
     load_saved_artifacts()
+    get_location_names()
     app.run(debug=True)
 
 
