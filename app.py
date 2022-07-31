@@ -55,11 +55,12 @@ def predict_home_price():
     location = request.form['location']
     bhk = int(request.form['bhk'])
     bath = int(request.form['bath'])
-    response = jsonify({
-        'estimated_price': get_estimated_price(location, total_sqft, bath, bhk)
-    })
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    # response = jsonify({
+    #     'estimated_price': get_estimated_price(location, total_sqft, bath, bhk)
+    # })
+    # response.headers.add('Access-Control-Allow-Origin', '*')
+    result = get_estimated_price(location, total_sqft, bath, bhk)
+    return render_template("app.html",prediction_text="{} Lakhs".format(result))
 
 if __name__ == '__main__':
     print("Starting Python Flask Server for BLR Home Price Prediction")
