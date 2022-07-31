@@ -13,7 +13,6 @@ __model = None
 def home():
     return render_template('app.html')
 
-@app.route('/load_saved_artifacts', methods=['GET'])
 def load_saved_artifacts():
     print('Loading Saved Artifacts...')
     global __data_columns
@@ -36,7 +35,6 @@ def get_location_names():
     return response
 
 
-@app.route('/get_estimated_price', methods=['GET'])
 def get_estimated_price(location, sqft, bath, bhk):
     try:
         loc_index = __data_columns.index(location.lower())
@@ -66,7 +64,6 @@ def predict_home_price():
 if __name__ == '__main__':
     print("Starting Python Flask Server for BLR Home Price Prediction")
     load_saved_artifacts()
-    get_location_names()
     app.run(debug=True)
 
 
