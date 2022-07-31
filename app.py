@@ -59,7 +59,8 @@ def predict_home_price():
     #     'estimated_price': get_estimated_price(location, total_sqft, bath, bhk)
     # })
     # response.headers.add('Access-Control-Allow-Origin', '*')
-    result = get_estimated_price(location, total_sqft, bath, bhk)
+    # result = get_estimated_price(location, total_sqft, bath, bhk)
+    result = "Loading"
     return render_template("app.html",prediction_text="{} Lakhs".format(result))
 
 if __name__ == '__main__':
