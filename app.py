@@ -1,4 +1,4 @@
-from flask import Flask,request,jsonify, app, url_for, render_template
+from flask import Flask,request,jsonify, render_template
 import pickle
 import json
 import numpy as np
@@ -35,64 +35,33 @@ def get_location_names():
     return response
 
 
-def get_estimated_price(location, sqft, bath, bhk):
+@app.route('/predict_home_price', methods=['POST'])
+def predict_home_price():
+    data = [str(x) for x in request.form.values()]
+    total_sqft = float(data[0])
+    bhk = int(data[1])
+    bath = int(data[2])
+    location = str(data[3])
+
     try:
         loc_index = __data_columns.index(location.lower())
     except:
         loc_index = -1
+    if loc_index==-1:
+        return render_template("app.html", predicted_price="Not Available",
+                               prediction_text="Please enter a valid location in Bengaluru!")
     x = np.zeros(len(__data_columns))
-    x[0] = sqft
+    x[0] = total_sqft
     x[1] = bath
     x[2] = bhk
     if loc_index >= 0:
         x[loc_index] = 1
-    return round(__model.predict([x])[0], 2)
-
-
-@app.route('/predict_home_price', methods=['GET', 'POST'])
-def predict_home_price():
-    total_sqft = float(request.form['total_sqft'])
-    location = request.form['location']
-    bhk = int(request.form['bhk'])
-    bath = int(request.form['bath'])
-    # response = jsonify({
-    #     'estimated_price': get_estimated_price(location, total_sqft, bath, bhk)
-    # })
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-    # result = get_estimated_price(location, total_sqft, bath, bhk)
-    result = "Loading"
-    return render_template("app.html",prediction_text="{} Lakhs".format(result))
+    result =  round(__model.predict([x])[0], 2)
+    return render_template("app.html",predicted_price="{} Lakhs".format(result),
+                           prediction_text='''A {}BHK house of {}sq.ft. with {} bathroom(s) in {}, Bengaluru costs {}
+                                           Lakhs'''.format(bhk, int(total_sqft), bath, location.title(), result))
 
 if __name__ == '__main__':
     print("Starting Python Flask Server for BLR Home Price Prediction")
     load_saved_artifacts()
     app.run(debug=True)
-
-
-
-
-
-
-# regmodel=pickle.load(open('regmodel.pkl','rb'))
-# scalar=pickle.load(open('scaling.pkl','rb'))
-# @app.route('/')
-# def home():
-#     return render_template('home.html')
-#
-# @app.route('/predict_api',methods=['POST'])
-# def predict_api():
-#     data=request.json['data']
-#     print(data)
-#     print(np.array(list(data.values())).reshape(1,-1))
-#     new_data=scalar.transform(np.array(list(data.values())).reshape(1,-1))
-#     output=regmodel.predict(new_data)
-#     print(output[0])
-#     return jsonify(output[0])
-#
-# @app.route('/predict',methods=['POST'])
-# def predict():
-#     data=[float(x) for x in request.form.values()]
-#     final_input=scalar.transform(np.array(data).reshape(1,-1))
-#     print(final_input)
-#     output=regmodel.predict(final_input)[0]
-#     return render_template("home.html",prediction_text="The House price prediction is {}".format(output))
